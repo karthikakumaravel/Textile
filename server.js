@@ -7,7 +7,7 @@ import authRoutes from "./routes/authRoute.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 import cors from "cors";
-
+import path from "path";
 //configure env
 dotenv.config();
 
@@ -26,6 +26,18 @@ app.use(morgan("dev"));
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/product", productRoutes);
+
+//static files
+// Define the absolute directory path to the client build directory
+const clientBuildPath = new URL("./client/build", import.meta.url).pathname;
+
+// Serve static files from the client build directory
+app.use(express.static(clientBuildPath));
+
+// Route handler for all other requests, serving index.html
+app.get('*', function(req, res) {
+  res.sendFile(path.join(clientBuildPath, "index.html"));
+});
 
 //rest api
 app.get("/", (req, res) => {
